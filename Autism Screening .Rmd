@@ -1,0 +1,250 @@
+---
+title: "Autism screening of toddlers ""
+author: 'Nagla Shahin '
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    fig_width: 8
+    code_folding: hide
+    highlight: tango
+    toc: yes
+    toc_float:
+   collapsed: yes
+---
+Autistic Spectrum Disorder (ASD) is a neurodevelopmental illness associated with large healthcare expenses, which can be significantly reduced with early detection. Unfortunately, ASD diagnosis wait times are extensive, and procedures are not cost effective.
+The following data frame captures recorded  ten behavioral traits (Q-Chat-10)as well as other individual characteristics that have been shown in behavior science to be beneficial in distinguishing ASD cases from controls.
+
+```{r setup, include=FALSE}
+library(plotly)
+df <- read.csv("C:/Users/Nagla/Desktop/BU/544/TERM PROJECT/DataSet.csv")
+
+names(df)
+colnames(df)
+
+```
+
+This dataset for autism screening of toddlers contains influential aspects that can be used for further analysis, particularly in defining autistic traits and enhancing ASD case classification. In this dataset,they recorded  ten behavioral traits (Q-Chat-10) as well as other individual characteristics that have been shown in behavior science to be beneficial in distinguishing ASD cases from controls.
+
+Let's look at one categorical variable,
+"Sex" and one numerical variable, 
+"Age_Mons." To visualize the data, we can design appropriate graphs.
+Here is how you might approach this analysis
+```{r echo=TRUE}
+library(ggplot2)
+library(dplyr)
+subset_df <- df %>% select(Sex, Age_Mons)
+
+```
+ Summary statistics for numerical variable 'Age_Mons'
+```{r echo=TRUE}
+summary(subset_df$Age_Mons)
+
+```
+ Bar plot for the categorical variable 'Sex'
+```{r echo = TRUE}
+ggplot(subset_df, aes(x = Sex, fill = Sex)) +
+  geom_bar() +
+  labs(title = "Distribution of Participants by Sex") +
+  xlab("Sex") +
+  ylab("Count") +
+  scale_fill_manual(values = c("#FF9999", "#66CCFF"))
+```
+Histogram for the numerical variable 'Age_Mons'
+```{r echo = TRUE}
+ggplot(subset_df, aes(x = Age_Mons, fill = Sex)) +
+  geom_histogram(binwidth = 6) +
+  labs(title = "Distribution of Participants' Ages") +
+  xlab("Age (Months)") +
+  ylab("Count_number of toddler") +
+  scale_fill_manual(values = c("#FF9999", "#66CCFF"))
+
+```
+#2nd
+Let us look at the association between the age of participants
+and the existence of ASD traits using two variables
+"Age_Mons" (numerical) Here is how we can use R to analyze
+and illustrate this relationship , where and "Class.ASD.Traits" (categorical)and it has 
+1-10 (Less that or equal 3 no ASD traits; > 3 ASD traits yes.
+```{r echo = TRUE}
+library(ggplot2)
+library(dplyr)
+ subset_df <- df %>% select(Age_Mons, Class.ASD.Traits)
+ # Box plot of age distribution for different classes of ASD traits
+ggplot(subset_df, aes(x = Class.ASD.Traits, y = Age_Mons, fill = Class.ASD.Traits)) +
+  geom_boxplot() +
+  labs(title = "Age Distribution by ASD Traits",
+       x = "ASD Traits",
+       y = "Age (Months)") +
+  scale_fill_manual(values = c("#FF9999", "#66CCFF"))
+```
+
+To display the age distribution for distinct classes of ASD features
+```{r echo = TRUE}
+library(ggplot2)
+library(dplyr)
+ subset_df <- df %>% select(Age_Mons, Class.ASD.Traits)
+ # Box plot of age distribution for different classes of ASD traits
+ggplot(subset_df, aes(x = Class.ASD.Traits, y = Age_Mons, fill = Class.ASD.Traits)) +
+  geom_boxplot() +
+  labs(title = "Age Distribution by ASD Traits",
+       x = "ASD Traits",
+       y = "Age (Months)") +
+  scale_fill_manual(values = c("#FF9999", "#66CCFF"))
+```
+#3rd 
+Let us study the "Age_Mons" variable  distribution using a histogram. Here is how 
+we can use R to study and visualize the distribution of the "Age_Mons" variable.
+
+```{r echo = TRUE} 
+age_df <- df$Age_Mons
+# Histogram of the 'Age_Mons' variable
+ggplot() +
+  geom_histogram(data = df, aes(x = Age_Mons), fill = "#66CCFF", color = "#333333") +
+  labs(title = "Distribution of Participants' Ages",
+       x = "Age (Months)",
+       y = "Count")
+
+```
+
+#4th 
+ To demonstrate the Central Limit Theorem (CLT)  application
+for the "Age_Mons" variable, we can take numerous random samples from the dataset and study the distribution of the sample means. 
+Here is an example of how this analysis 
+
+
+```{r echo = TRUE} 
+age_df <- df$Age_Mons
+set.seed(3455)
+# Number of random samples to draw
+num_samples <- 1000
+# Sample size for each random sample
+sample_size <- 30
+sample_means <- numeric(num_samples)
+for (i in 1:num_samples) {
+  sample <- sample(age_df, size = sample_size, replace = TRUE)
+  sample_means[i] <- mean(sample)
+}
+# Plot the distribution of sample means
+ggplot() +
+  geom_histogram(aes(x = sample_means), bins = 30, fill = "#66CCFF", color = "#333333") +
+  labs(title = "Distribution of Sample Means",
+       x = "Sample Means",
+       y = "Count")
+
+
+```
+We can see that the distribution of sample means tends to follow a normal distribution when we draw numerous random samples and calculate their means,demonstrating the applicability of the Central Limit Theorem for the "Age_Mons" variable. According to the CLT, as sample size rises, the sample means will approach a normal distribution independent of the underlying distribution.
+
+#5th
+ Analysis and conclusions based on the simple random sample
+
+```{r echo = TRUE} 
+
+set.seed(3455)
+sample_size <- 100
+simple_random_sample <- sample(age_df, size = sample_size)
+# Analysis and conclusions based on the simple random sample
+mean_sample <- mean(simple_random_sample)
+sd_sample <- sd(simple_random_sample)
+# Print the results
+cat("Simple Random Sample Mean:", mean_sample, "\n")
+cat("Simple Random Sample Standard Deviation:", sd_sample, "\n")
+
+```
+ To Create strata based on age groups.And Analysis and conclusions based on the stratified sample
+
+```{r echo = TRUE} 
+strata <- cut(age_df, breaks = c(0, 12, 24, 36, 48, 60), include.lowest = TRUE, labels = c("0-12", "12-24", "24-36", "36-48", "48-60"))
+# Stratified sampling
+sample_size_per_stratum <- 20
+stratified_sample <- unlist(tapply(age_df, strata, function(x) sample(x, size = sample_size_per_stratum)))
+
+# Analysis and conclusions based on the stratified sample
+mean_sample <- mean(stratified_sample)
+sd_sample <- sd(stratified_sample)
+
+# Print the results
+cat("Stratified Sample Mean:", mean_sample, "\n")
+cat("Stratified Sample Standard Deviation:", sd_sample, "\n")
+
+```
+To Perform systematic sampling
+
+```{r echo = TRUE} 
+age_df <- df$Age_Mons
+# Set the sampling interval (k) based on the desired sample size
+sample_size <- 100
+sampling_interval <- length(age_df) / sample_size
+# Perform systematic sampling
+systematic_sample <- age_df[seq(1, length(age_df), by = sampling_interval)]
+
+# Analysis and conclusions based on the systematic sample
+mean_sample <- mean(systematic_sample)
+sd_sample <- sd(systematic_sample)
+
+# Print the results
+cat("Systematic Sample Mean:", mean_sample, "\n")
+cat("Systematic Sample Standard Deviation:", sd_sample, "\n")
+
+```
+6th :Use Data wrangling techniques for the appropriate analysis of your
+data.To show the toddler who has score 3 and above out of ten.
+```{r echo = TRUE} 
+library(dplyr)
+#Use the filter() function from the dplyr package 
+filtered_data <- filter(df, Class.ASD.Traits > 3)
+filtered_data
+```
+Use the select() function to choose specific columns of interest
+```{r echo = TRUE} 
+selected_data <- select(df, Age_Mons, Qchat.10.Score)
+```
+Use the arrange() function to sort the data based on one or more variables
+```{r echo = TRUE} 
+sorted_data <- arrange(df, Age_Mons)
+```
+Remove rows with missing values
+```{r echo = TRUE} 
+clean_data <- na.omit(df)
+```
+Impute missing values using mean imputation
+```{r echo = TRUE} 
+imputed_data <- df %>%
+  mutate(Age_Mons = ifelse(is.na(Age_Mons), mean(Age_Mons, na.rm = TRUE), Age_Mons))
+```
+7th:  library(plotly)
+
+```{r echo = TRUE} 
+# Bar plot for Ethnicity
+ethnicity_plot <- plot_ly(df, x = ~Ethnicity, type = "bar")
+
+# Customize plot layout
+ethnicity_plot <- ethnicity_plot %>% layout(
+  title = "Distribution of Ethnicity",
+  xaxis = list(title = "Ethnicity"),
+  yaxis = list(title = "Count_number _of screening toddler")
+)
+
+# Display the interactive bar plot
+ethnicity_plot
+```
+
+To check if there any correlation between the Age in months and the score of 10 questions.
+```{r echo = TRUE} 
+correlation <- cor(df$Age_Mons, df$Qchat.10.Score)
+cat("Correlation Coefficient:", correlation, "\n")
+```
+Based on the correlation coefficient of roughly ,0.0008494673, we can conclude that the variables 
+"Age_Mons" and "Qchat.10.Score" have a very weak or negligible correlation.
+The close proximity of the correlation coefficient to zero indicates that there is no meaningful linear link between these variables.
+It is crucial to note that correlation coefficients close to 0 
+do not always indicate the absence of a relationship. There may still be non-linear or other types of correlations between the variables that the correlation coefficient does not reflect. As a result,
+it is advised to do additional analyses or investigate different statistical measu
+```{r echo = FALSE} 
+# Customize plot layout
+scatter_plot <- scatter_plot %>% layout(
+  title = "Age vs Q-Chat-10 Score",
+  xaxis = list(title = "Age (in months)"),
+  yaxis = list(title = "Q-Chat-10 Score")
+  
